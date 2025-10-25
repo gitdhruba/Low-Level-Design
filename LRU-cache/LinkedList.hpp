@@ -14,6 +14,7 @@ public:
     LinkedList();
     ~LinkedList();
 
+    void clear();
     void push_front(ListNode<K, V> *);
     void push_back(ListNode<K, V> *);
     ListNode<K, V> * pop_front();

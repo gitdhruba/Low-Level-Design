@@ -7,8 +7,9 @@ public:
     ICache() {}
     virtual ~ICache() {}
 
-    virtual void put(K, V) = 0;
-    virtual V get(K) = 0;
+    virtual void clear() = 0;
+    virtual void put(const K &, const V &) = 0;
+    virtual V get(const K &) = 0;
 };
 
 #endif

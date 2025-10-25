@@ -1,5 +1,7 @@
 #include "./ListNode.hpp"
 
+template class ListNode<int, int>;
+
 template<class K, class V>
 ListNode<K, V>::ListNode()
     : key(K{}), value(V{}), prev(nullptr), next(nullptr) {}
@@ -25,11 +27,6 @@ ListNode<K, V> * ListNode<K, V>::getPrev() const {
 template<class K, class V>
 ListNode<K, V> * ListNode<K, V>::getNext() const {
     return this->next;
-}
-
-template<class K, class V>
-void ListNode<K, V>::setKey(K key) {
-    this->key = key;
 }
 
 template<class K, class V>
