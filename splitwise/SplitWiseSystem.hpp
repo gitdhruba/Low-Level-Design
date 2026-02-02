@@ -1,0 +1,36 @@
+#ifndef SPLITWISESYSTEM_HPP
+#define SPLITWISESYSTEM_HPP
+
+#include <map>
+
+#include "./User.hpp"
+#include "./Group.hpp"
+#include "./Expense.hpp"
+#include "./SplitType.hpp"
+
+class SplitWiseSystem {
+    private:
+        std::map<uintptr_t, User*> users;
+        std::map<uintptr_t, Group*> groups;
+        std::map<uintptr_t, Expense*> expenses;
+        std::map<uintptr_t, std::set<uintptr_t>> userExpenses;
+
+    public:
+        SplitWiseSystem();
+        ~SplitWiseSystem();
+
+        const User& getUser(uintptr_t id) const;
+        const Group& getGroup(uintptr_t id) const;
+
+        std::pair<const User&, bool> createUser(const std::string &name);
+        std::pair<const Group&, bool> createGroup(const std::string &name, const std::string &description, uintptr_t ownerId);
+
+        bool deleteUser(uintptr_t id);
+        bool deleteGroup(uintptr_t id);
+
+        std::pair<const Expense&, bool> createExpense(const std::string &description, uintptr_t payerId, const std::vector<std::pair<uintptr_t, double>> &shares, SplitType type);
+        bool updateExpense(uintptr_t id, const std::string &description, uintptr_t payerId, const std::vector<std::pair<uintptr_t, double>> &shares, SplitType type);
+        bool deleteExpense(uintptr_t id);
+};
+
+#endif

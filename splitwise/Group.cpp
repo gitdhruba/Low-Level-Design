@@ -30,6 +30,9 @@ const std::set<const User *>& Group::getMembers() const {
     return members;
 }
 
+const std::set<const Expense *>& Group::getExpenses() const {
+    return expenses;
+}
 
 // setters
 void Group::setName(const std::string &name) {
@@ -56,4 +59,8 @@ bool Group::removeMember(const User *member) {
     else {
         return false;
     }
+}
+
+void Group::addExpense(const Expense *expense) {
+    this->expenses.insert(expense);
 }

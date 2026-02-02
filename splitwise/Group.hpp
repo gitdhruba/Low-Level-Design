@@ -6,6 +6,7 @@
 #include <set>
 
 #include "./User.hpp"
+#include "./Expense.hpp"
 
 class Group {
     private:
@@ -14,6 +15,7 @@ class Group {
         std::string description;
         const User* owner;
         std::set<const User *> members;
+        std::set<const Expense *> expenses;
 
 
     public:
@@ -25,12 +27,14 @@ class Group {
         const std::string& getDescription() const;
         const User* getOwner() const;
         const std::set<const User *>& getMembers() const;
+        const std::set<const Expense *>& getExpenses() const;
 
         void setName(const std::string &name);
         void setDescription(const std::string &description);
         void setMembers(const std::vector<const User *> &members);
         bool addMember(const User *member);
         bool removeMember(const User *member);
+        void addExpense(const Expense *expense);
 };
 
 #endif
