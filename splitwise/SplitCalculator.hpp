@@ -1,6 +1,7 @@
 #ifndef SPLITCALCULATOR_HPP
 #define SPLITCALCULATOR_HPP
 
+#include <vector>
 #include <map>
 
 #include "./SplitType.hpp"
@@ -22,7 +23,8 @@ class SplitCalculator {
 
         virtual bool calculateSplits(double amount, std::vector<std::pair<uintptr_t, double>> &shares) = 0;
 
-        bool validateSplits(double amount, std::map<uintptr_t, double> &shares);
+        bool validateSplits(double amount, const std::map<uintptr_t, double> &shares);
+        bool validateSplits(double amount, const std::vector<std::pair<uintptr_t, double>> &shares);
 };
 
 class EqualSplitCalculator : public SplitCalculator {
