@@ -34,7 +34,8 @@ class Group {
         void setMembers(const std::vector<uintptr_t> &members);
         bool addMember(uintptr_t memberId);
         bool removeMember(uintptr_t memberId);
-        void addExpense(uintptr_t expenseId);
+        bool addExpense(uintptr_t expenseId);
+        bool removeExpense(uintptr_t expenseId);
 };
 
 #endif

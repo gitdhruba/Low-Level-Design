@@ -28,8 +28,9 @@ class SplitWiseSystem {
         bool deleteUser(uintptr_t id);
         bool deleteGroup(uintptr_t id);
 
-        std::pair<const Expense&, bool> createExpense(const std::string &description, uintptr_t payerId, const std::vector<std::pair<uintptr_t, double>> &shares, SplitType type);
-        bool updateExpense(uintptr_t id, const std::string &description, uintptr_t payerId, const std::vector<std::pair<uintptr_t, double>> &shares, SplitType type);
+        const Expense& createExpense(const std::string &description, uintptr_t payerId, double amount, const std::vector<std::pair<uintptr_t, double>> &shares, SplitType type);
+        const Expense& createGroupExpense(uintptr_t groupId, const std::string &description, uintptr_t payerId, double amount, const std::vector<std::pair<uintptr_t, double>> &shares, SplitType type);
+        bool updateExpense(uintptr_t id, const std::string &description, uintptr_t payerId, double amount, const std::vector<std::pair<uintptr_t, double>> &shares, SplitType type);
         bool deleteExpense(uintptr_t id);
 };
 

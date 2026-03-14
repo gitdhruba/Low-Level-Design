@@ -1,10 +1,14 @@
 #include "./Group.hpp"
+#include "./SplitWiseException.hpp"
 
 Group::Group(const std::string &name, const std::string &description, uintptr_t ownerId) {
     this->id = reinterpret_cast<uintptr_t>(this);
     this->name.assign(name);
     this->description.assign(description);
     this->ownerId = ownerId;
+    if (this->members.insert(ownerId).second == false) {
+        throw SplitWiseException("[Error] Couldn't add owner to the members.");
+    }
 }
 
 Group::~Group() {}
@@ -61,6 +65,10 @@ bool Group::removeMember(uintptr_t memberId) {
     }
 }
 
-void Group::addExpense(uintptr_t expenseId) {
-    this->expenses.insert(expenseId);
+bool Group::addExpense(uintptr_t expenseId) {
+    return this->expenses.insert(expenseId).second;
+}
+
+bool Group::removeExpense(uintptr_t expenseId) {
+    return (this->expenses.erase(expenseId) > 0);
 }

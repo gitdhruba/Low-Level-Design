@@ -1,11 +1,12 @@
 #include "./Expense.hpp"
 #include "./SplitWiseException.hpp"
 
-Expense::Expense(const std::string &description, double amount, uintptr_t payerId, std::vector<std::pair<uintptr_t, double>> shares, SplitType splitType) {
+Expense::Expense(const std::string &description, uintptr_t groupId, uintptr_t payerId, double amount, std::vector<std::pair<uintptr_t, double>> shares, SplitType splitType) {
     this->id = reinterpret_cast<uintptr_t>(this);
     this->description.assign(description);
     this->amount = amount;
     this->payerId = payerId;
+    this->groupId = groupId;
     this->splitCalculator.reset(SplitCalculatorFactory::createSplitCalculator(splitType));
 
     if (!(this->splitCalculator->calculateSplits(amount, shares))) {
@@ -13,6 +14,7 @@ Expense::Expense(const std::string &description, double amount, uintptr_t payerI
     }
     
     this->amount = amount;
+    this->isSettled = false;
     this->shares.clear();
     for (const auto &it : shares) this->shares.insert(it);
 }
@@ -39,10 +41,17 @@ uintptr_t Expense::getPayerId() const {
     return payerId;
 }
 
+uintptr_t Expense::getGroupId() const {
+    return groupId;
+}
+
 double Expense::getShare(uintptr_t id) {
     return shares[id];
 }
 
+bool Expense::isSettledUp() const {
+    return isSettled;
+}
 
 // setters
 void Expense::setDescription(const std::string &description) {
