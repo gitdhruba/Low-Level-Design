@@ -13,17 +13,17 @@ class SplitWiseSystem {
         std::map<uintptr_t, User*> users;
         std::map<uintptr_t, Group*> groups;
         std::map<uintptr_t, Expense*> expenses;
-        std::map<uintptr_t, std::set<uintptr_t>> userExpenses;
+        std::map<uintptr_t, std::map<uintptr_t, double>> balances;
 
     public:
-        SplitWiseSystem();
-        ~SplitWiseSystem();
+        SplitWiseSystem() {};
+        ~SplitWiseSystem() {};
 
         const User& getUser(uintptr_t id) const;
         const Group& getGroup(uintptr_t id) const;
 
-        std::pair<const User&, bool> createUser(const std::string &name);
-        std::pair<const Group&, bool> createGroup(const std::string &name, const std::string &description, uintptr_t ownerId);
+        const User& createUser(const std::string &name);
+        const Group& createGroup(const std::string &name, const std::string &description, uintptr_t ownerId);
 
         bool deleteUser(uintptr_t id);
         bool deleteGroup(uintptr_t id);

@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <memory>
 
 #include "./User.hpp"
 #include "./SplitCalculator.hpp"

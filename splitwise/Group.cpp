@@ -1,10 +1,10 @@
 #include "./Group.hpp"
 
-Group::Group(const std::string &name, const std::string &description, const User *owner) {
+Group::Group(const std::string &name, const std::string &description, uintptr_t ownerId) {
     this->id = reinterpret_cast<uintptr_t>(this);
     this->name.assign(name);
     this->description.assign(description);
-    this->owner = owner;
+    this->ownerId = ownerId;
 }
 
 Group::~Group() {}
@@ -22,15 +22,15 @@ const std::string& Group::getDescription() const {
     return description;
 }
 
-const User* Group::getOwner() const {
-    return owner;
+uintptr_t Group::getOwnerId() const {
+    return ownerId;
 }
 
-const std::set<const User *>& Group::getMembers() const {
+const std::set<uintptr_t>& Group::getMembers() const {
     return members;
 }
 
-const std::set<const Expense *>& Group::getExpenses() const {
+const std::set<uintptr_t>& Group::getExpenses() const {
     return expenses;
 }
 
@@ -43,12 +43,12 @@ void Group::setDescription(const std::string &description) {
     this->description.assign(description);
 }
 
-bool Group::addMember(const User *member) {
-    return this->members.insert(member).second;
+bool Group::addMember(uintptr_t memberId) {
+    return this->members.insert(memberId).second;
 }
 
-bool Group::removeMember(const User *member) {
-    std::set<const User *>::iterator it = members.find(member);
+bool Group::removeMember(uintptr_t memberId) {
+    std::set<uintptr_t>::const_iterator it = members.find(memberId);
     if (it != members.end()) {
         // logic for checking whether there is any debt remaining for this member
         // .....
@@ -61,6 +61,6 @@ bool Group::removeMember(const User *member) {
     }
 }
 
-void Group::addExpense(const Expense *expense) {
-    this->expenses.insert(expense);
+void Group::addExpense(uintptr_t expenseId) {
+    this->expenses.insert(expenseId);
 }
