@@ -6,6 +6,7 @@
 #include "./User.hpp"
 #include "./Group.hpp"
 #include "./Expense.hpp"
+#include "./Transaction.hpp"
 #include "./SplitType.hpp"
 
 class SplitWiseSystem {
@@ -13,11 +14,13 @@ class SplitWiseSystem {
         std::map<uintptr_t, User*> users;
         std::map<uintptr_t, Group*> groups;
         std::map<uintptr_t, Expense*> expenses;
+        std::map<uintptr_t, Transaction*> transactions;
         std::map<uintptr_t, std::map<uintptr_t, double>> balances;
+        std::map<uintptr_t, std::vector<uintptr_t>> userTransactions;
 
     public:
-        SplitWiseSystem() {};
-        ~SplitWiseSystem() {};
+        SplitWiseSystem();
+        ~SplitWiseSystem();
 
         const User& getUser(uintptr_t id) const;
         const Group& getGroup(uintptr_t id) const;
@@ -32,6 +35,10 @@ class SplitWiseSystem {
         const Expense& createGroupExpense(uintptr_t groupId, const std::string &description, uintptr_t payerId, double amount, const std::vector<std::pair<uintptr_t, double>> &shares, SplitType type);
         bool updateExpense(uintptr_t id, const std::string &description, uintptr_t payerId, double amount, const std::vector<std::pair<uintptr_t, double>> &shares, SplitType type);
         bool deleteExpense(uintptr_t id);
+
+        bool doSettlement(uintptr_t expenseId, uintptr_t userId, double amount);
+
+        void printBalance(uintptr_t userId);
 };
 
 #endif

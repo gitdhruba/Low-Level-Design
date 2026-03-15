@@ -17,7 +17,6 @@ class Expense {
         uintptr_t groupId;
         uintptr_t payerId;
         double   amount;
-        bool isSettled;
         std::map<uintptr_t, double> shares;
         std::unique_ptr<SplitCalculator>  splitCalculator;
 
@@ -30,12 +29,15 @@ class Expense {
         double getAmount() const;
         uintptr_t getPayerId() const;
         uintptr_t getGroupId() const;
+        const std::map<uintptr_t, double>& getShares() const;
         double getShare(uintptr_t id);
         bool isSettledUp() const;
 
         void setDescription(const std::string &description);
         void setPayerId(uintptr_t payerId);
         bool updateExpense(double amount, std::vector<std::pair<uintptr_t, double>> shares, SplitType splitType);
+
+        bool doSettlement(uintptr_t shareHolderId, double amount);
 
 };
 

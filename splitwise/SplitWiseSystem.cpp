@@ -1,7 +1,48 @@
 #include <cassert>
+#include <iostream>
 
 #include "./SplitWiseSystem.hpp"
 #include "./SplitWiseException.hpp"
+
+SplitWiseSystem::SplitWiseSystem() {}
+
+SplitWiseSystem::~SplitWiseSystem() {
+    // delete transactions
+    for (auto &it : transactions) {
+        delete it.second;
+        it.second = nullptr;
+    }
+
+    transactions.clear();
+    userTransactions.clear();
+
+    // delete expenses
+    for (auto &it : expenses) {
+        delete it.second;
+        it.second = nullptr;
+    }
+
+    expenses.clear();
+
+    // delete balances
+    balances.clear();
+
+    // delete groups
+    for (auto &it : groups) {
+        delete it.second;
+        it.second = nullptr;
+    }
+
+    groups.clear();
+
+    // delete users
+    for (auto &it : users) {
+        delete it.second;
+        it.second = nullptr;
+    }
+
+    users.clear();
+}
 
 const User& SplitWiseSystem::getUser(uintptr_t id) const {
     std::map<uintptr_t, User*>::const_iterator it = users.find(id);
@@ -127,6 +168,15 @@ const Expense& SplitWiseSystem::createExpense(const std::string &description, ui
 
     assert(expense != nullptr);
 
+    // update balances
+    const std::map<uintptr_t, double>& shares = expense->getShares();
+    for (const auto &it : shares) {
+        if (it.first != payerId) {
+            balances[payerId][it.first] += it.second;
+            balances[it.first][payerId] -= it.second;
+        }
+    }
+
     return *(expense);
 }
 
@@ -163,6 +213,15 @@ const Expense& SplitWiseSystem::createGroupExpense(uintptr_t groupId, const std:
         throw SplitWiseException("[Error] Couldn't add expense to the group.");
     }
 
+    // update balances
+    const std::map<uintptr_t, double>& shares = expense->getShares();
+    for (const auto &it : shares) {
+        if (it.first != payerId) {
+            balances[payerId][it.first] += it.second;
+            balances[it.first][payerId] -= it.second;
+        }
+    }
+
     return *(expense);
 }
 
@@ -178,9 +237,30 @@ bool SplitWiseSystem::updateExpense(uintptr_t id, const std::string &description
     }
 
     Expense &expense = *(it->second);
+    // update balances from old expense
+    uintptr_t oldPayerId = expense.getPayerId();
+    const std::map<uintptr_t, double>& oldShares = expense.getShares();
+    for (const auto &it : oldShares) {
+        if (it.first != oldPayerId) {
+            balances[oldPayerId][it.first] -= it.second;
+            balances[it.first][oldPayerId] += it.second;
+        }
+    }
+
     expense.setDescription(description);
     expense.setPayerId(payerId);
-    return expense.updateExpense(amount, shares, type);
+    bool res = expense.updateExpense(amount, shares, type);
+    
+    // update balances from new expense
+    const std::map<uintptr_t, double>& newShares = expense.getShares();
+    for (const auto &it : newShares) {
+        if (it.first != payerId) {
+            balances[payerId][it.first] += it.second;
+            balances[it.first][payerId] -= it.second;
+        }
+    }
+
+    return res;
 }
 
 bool SplitWiseSystem::deleteExpense(uintptr_t id) {
@@ -206,3 +286,49 @@ bool SplitWiseSystem::deleteExpense(uintptr_t id) {
     return (expenses.erase(id) > 0);
 }
 
+bool SplitWiseSystem::doSettlement(uintptr_t expenseId, uintptr_t userId, double amount) {
+    std::map<uintptr_t, Expense*>::iterator it = expenses.find(expenseId);
+    if (it == expenses.end()) {
+        throw SplitWiseException("[Error] Expense doesn't exist.");
+    }
+
+    if (users.find(userId) == users.end()) {
+        throw SplitWiseException("[Error] User doesn't exist.");
+    }
+
+    Expense &expense = *(it->second);
+    bool res = expense.doSettlement(userId, amount);
+    if (res) {
+        uintptr_t payerId = expense.getPayerId();
+
+        // create a transaction
+        Transaction *transaction = nullptr;
+        try {
+            transaction = new Transaction(userId, payerId, amount);
+            transactions[transaction->getId()] = transaction;
+        }
+        catch (std::bad_alloc &e) {
+            throw SplitWiseException("[Error] Couldn't create transaction.");
+        }
+
+        assert(transaction != nullptr);
+
+        userTransactions[userId].push_back(transaction->getId());
+        
+        // update balance
+        balances[payerId][userId] -= amount;
+        balances[userId][payerId] += amount;
+    }
+
+    return res;
+}
+
+void SplitWiseSystem::printBalance(uintptr_t userId) {
+    if (users.find(userId) == users.end()) {
+        throw SplitWiseException("[Error] User doesn't exist.");
+    }
+
+    for (const auto &it : balances[userId]) {
+        std::cout << "user id - " << it.first << "    " << "balance - " << it.second << std::endl;
+    }
+}
