@@ -323,12 +323,37 @@ bool SplitWiseSystem::doSettlement(uintptr_t expenseId, uintptr_t userId, double
     return res;
 }
 
-void SplitWiseSystem::printBalance(uintptr_t userId) {
+void SplitWiseSystem::showBalance(uintptr_t userId) {
     if (users.find(userId) == users.end()) {
         throw SplitWiseException("[Error] User doesn't exist.");
     }
 
     for (const auto &it : balances[userId]) {
         std::cout << "user id - " << it.first << "    " << "balance - " << it.second << std::endl;
+    }
+}
+
+void SplitWiseSystem::showTransactions(uintptr_t userId) {
+    if (users.find(userId) == users.end()) {
+        throw SplitWiseException("[Error] User doesn't exist.");
+    }
+
+    for (const auto &it : userTransactions[userId]) {
+        const Transaction &trxn = *(transactions[it]);
+        std::cout << "Transaction id - " << trxn.getId() << "Payer - " << trxn.getPayerId() << "   Payee - " << trxn.getPayeeId() << "   Amount - " << trxn.getAmount() << std::endl;
+    }
+}
+
+void SplitWiseSystem::showExpenses(uintptr_t userId) {
+    if (users.find(userId) == users.end()) {
+        throw SplitWiseException("[Error] User doesn't exist.");
+    }
+
+    for (const auto &it : expenses) {
+        Expense &expense = *(it.second);
+        double amount = expense.getShare(userId);
+        if (amount > 0.0) {
+            std::cout << "Expense id - " << expense.getId() << "   amount - " << amount << std::endl;
+        }
     }
 }

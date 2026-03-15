@@ -38,7 +38,9 @@ class SplitWiseSystem {
 
         bool doSettlement(uintptr_t expenseId, uintptr_t userId, double amount);
 
-        void printBalance(uintptr_t userId);
+        void showBalance(uintptr_t userId);
+        void showTransactions(uintptr_t userId);
+        void showExpenses(uintptr_t userId);
 };
 
 #endif
